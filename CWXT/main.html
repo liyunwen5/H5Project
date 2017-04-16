@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="css/mui.min.css">
+		<link rel="stylesheet" href="css/style.css">
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+			
+			p {
+				text-indent: 22px;
+			}
+			
+			span.mui-icon {
+				font-size: 14px;
+				color: #007aff;
+			}
+			
+			.mui-off-canvas-left {
+				color: #fff;
+			}
+			
+			.title {
+				margin: 35px 15px 10px;
+			}
+			
+			.title+.content {
+				margin: 10px 15px 35px;
+				color: #bbb;
+				text-indent: 1em;
+				font-size: 14px;
+				line-height: 24px;
+			}
+			
+			#mb {
+				background: none;
+				border: none;
+				box-shadow: none;
+			}
+			
+			#tbmb {
+				color: #FFFFFF;
+				background-color: #3BBFFF;
+				width: 50px;
+				height: 60px;
+				border: none;
+			}
+			
+			input {
+				color: #000;
+			}
+			
+			.textJZ {
+				margin-top: 10px;
+			}
+			
+			.mui-content div {
+				padding-left: 15px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="offCanvasWrapper" class="mui-off-canvas-wrap mui-draggable">
+			<!--侧滑菜单部分-->
+			<aside id="offCanvasSide" class="mui-off-canvas-left ">
+				<div id="offCanvasSideScroll" class="mui-scroll-wrapper">
+					<div class="mui-scroll">
+						<div class="title mui-text-center">
+							<span id="tx"><img id="imgsrc" src="images/head-default.jpg" width="40%" style="border-radius: 50%;"/></span></div>
+						<div class="content">
+							<p>账号：<span id='yhzh'></span></p>
+							<p>昵称：<span id='yhnc'></span></p>
+							<p>邮件：<span id='yhyj'></span></p>
+							<p style="margin: 10px 15px;">
+								<button id="zhuxiao" type="button" class="mui-btn mui-btn-yellow mui-btn-block" style="padding: 5px 20px;" >注销</button>
+							</p>
+							<p style="margin: 10px 15px;">
+								<button id="tuichu" type="button" class="mui-btn mui-btn-danger mui-btn-block" style="padding: 5px 20px;">退出</button>
+							</p>
+						</div>
+					</div>
+				</div>
+			</aside>
+			<!--主界面部分-->
+			<div class="mui-inner-wrap">
+				<header class="mui-bar mui-bar-nav  mui-center header" style="height: 60px; text-align: center;">
+					<a href="#offCanvasSide" class=" mui-action-menu  mui-pull-left "><img id="minHead" src="images/farmer.png" style="margin-top: 10px;width:40px;height:40px;border-radius: 50%;"  /></a>
+					<h1 class="mui-title" style="font-size: 20px; height: 60px !important;margin-top: 7px;">财务系统首页</h1>
+				</header>
+				<div class="mui-content">
+					<ul class="mui-table-view " style="margin-top: 20px;">
+						<li class="mui-table-view-cell mui-center" id="infoInsert" style="height: 60px;">
+							<img class=" mui-pull-left textJZ" src="images/main/btn_lr.png">
+							<div class="mui-media-body mui-navigate-right textJZ">信息录入 </div>
+						</li>
+
+					</ul>
+					<ul class="mui-table-view textJZ">
+						<li class="mui-table-view-cell mui-center" style="height: 60px;" id="infoSelect">
+							<img class=" mui-pull-left textJZ" src="images/main/btn_cx.png">
+							<div class="mui-media-body mui-navigate-right textJZ">详情查询 </div>
+						</li>
+						<li class="mui-table-view-cell mui-center" style="height: 60px;" id="showChart">
+							<img class=" mui-pull-left textJZ" src="images/main/btn_tongji.png">
+							<div class="mui-media-body mui-navigate-right textJZ" ;>汇总查询</div>
+						</li>
+
+					</ul>
+					<ul class="mui-table-view textJZ">
+						<li class="mui-table-view-cell mui-center" id="bbgx" style="height: 60px;">
+							<img class=" mui-pull-left textJZ" src="images/main/btn_shenji.png">
+							<div class="mui-media-body mui-navigate-right textJZ">版本更新 </div>
+						</li>
+
+					</ul>
+				</div>
+				<!--这个可以隐藏图标-->
+				<div id="mb" class="mui-off-canvas-backdrop">
+					<div id="tbmb"></div>
+				</div>
+			</div>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script src="js/new_file.js"></script>
+		<script src="js/app.js"></script>
+		<script src="js/update.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/mui.picker.min.js"></script>
+		<script type="text/javascript" src="js/immersed.js"></script>
+		<script type="text/javascript" src="js/updata_file.js"></script>
+		<script>
+			bbgx();
+			mui.init();
+			var state;
+			var tx = document.getElementById('tx');
+			var infoInsert = document.getElementById('infoInsert');
+			var infoSelect = document.getElementById('infoSelect');
+			var showChart = document.getElementById('showChart');
+			var imgsrc = document.getElementById('imgsrc');
+			var minHead = document.getElementById('minHead');  //小头像
+			var yhzh = document.getElementById('yhzh');
+			var yhnc = document.getElementById('yhnc');
+			var yhyj = document.getElementById('yhyj');
+			var slider = mui("#slider");
+			var tqybinfo = null;
+			var nhxxinfo = null;
+			mui.plusReady(function() {
+				state = app.getState();
+				var Json = state.personInfo;
+				console.log(JSON.parse(Json).photoURL);
+				var imgurl = !plus.storage.getItem("userImgSrc")?JSON.parse(Json).photoURL:plus.storage.getItem("userImgSrc");  //本地存储图片地址
+				imgsrc.src = (imgurl == "") ? "images/head-default.jpg" : imgurl;
+				minHead.src = (imgurl == "") ? "images/farmer.png" : imgurl;
+				yhzh.innerText = (JSON.parse(Json).phone == "") ? "无" : JSON.parse(Json).phone;
+				yhnc.innerText = (JSON.parse(Json).displayName == "") ? "无" : JSON.parse(Json).displayName;
+				yhyj.innerText = (JSON.parse(Json).email == "") ? "无" : JSON.parse(Json).email;
+				//退出
+				document.getElementById("tuichu").addEventListener('tap', function() {
+					plus.runtime.quit();
+				});
+			});
+			//侧滑容器父节点
+			var offCanvasWrapper = mui('#offCanvasWrapper');
+			//菜单容器
+			var offCanvasSide = document.getElementById("offCanvasSide");
+			//退出界面
+			mui.oldBack = mui.back;
+			var backButtonPress = 0;
+
+			//菜单界面，‘关闭侧滑菜单’按钮的点击事件
+			document.getElementById('zhuxiao').addEventListener('tap', function() {
+				//关闭当前页就可以
+				//				var self = plus.webview.currentWebview();
+				//				plus.webview.close(self.id);
+				mui.currentWebview.close(); //关闭当前页
+				plus.webview.close("wenjian"); //关闭文件上传页面-解决页面存在缓存不会重新加载，登陆人信息还是上一个用户的，关闭页面可以清除缓存，再次打开可以重新加载页面
+				app.setState(null);
+				mui.openWindow({
+					url: 'login.html',
+					id: 'login',
+					show: {
+						aniShow: 'pop-in'
+					},
+					waiting: {
+						autoShow: false
+					}
+				});
+			});
+			//个人信息
+			tx.addEventListener('tap', function() {
+				mui.openWindow({
+					id: 'personinfo',
+					url: 'subpage/personinfo.html',
+					show: {
+						aniShow: 'slide-in-right'
+						//,duration: 300
+					},
+					waiting: {
+						autoShow: false,
+						title: '正在加载...'
+					}
+
+				});
+			});
+			//信息录入按钮点击事件
+			infoInsert.addEventListener('tap', function() {
+				if(mui.os.plus) {
+					var a = [{
+						title: "钱的收入"
+					}, {
+						title: "钱的支出"
+					}];
+					plus.nativeUI.actionSheet({
+						title: "选择信息输入类型",
+						cancel: "取消",
+						buttons: a
+					}, function(b) {
+						switch(b.index) {
+							case 0:
+
+								break;
+							case 1:
+								mui.openWindow({
+									id: 'qdsl',
+									url: 'ye/sl.html',
+									show: {
+										aniShow: 'slide-in-right'
+										//,duration: 300
+									},
+									waiting: {
+										autoShow: true,
+										title: '正在加载...'
+									}
+								});
+
+								break;
+							case 2:
+								mui.openWindow({
+									id: 'qdzc',
+									url: 'ye/zc.html',
+									show: {
+										aniShow: 'slide-in-right'
+										//,duration: 300
+									},
+									waiting: {
+										autoShow: true,
+										title: '正在加载...'
+									}
+								});
+
+								break;
+							default:
+								break
+						}
+					})
+				}
+			});
+			//信息查询按钮点击事件
+			infoSelect.addEventListener('tap', function() {
+				mui.openWindow({
+					url: 'query/ddcxinfo.html',
+					id: "infoSelect"
+				});
+			});
+			//汇总查询按钮点击事件
+			showChart.addEventListener('tap', function() {
+				mui.openWindow({
+					url: 'query/infoQuery.html',
+					id: "showChart"
+				});
+			});
+			//版本更新
+			document.getElementById("bbgx").addEventListener('tap', function() {
+				bbgx();
+			});
+			
+			//主界面和侧滑菜单界面均支持区域滚动；
+			mui('#offCanvasSideScroll').scroll();
+			mui('#offCanvasContentScroll').scroll();
+			//实现ios平台原生侧滑关闭页面；
+			if(mui.os.plus && mui.os.ios) {
+				mui.plusReady(function() { //5+ iOS暂时无法屏蔽popGesture时传递touch事件，故该demo直接屏蔽popGesture功能
+					plus.webview.currentWebview().setStyle({
+						'popGesture': 'none'
+					});
+				});
+			}
+			mui.back = function(event) {
+				backButtonPress++;
+				if(backButtonPress > 1) {
+					plus.runtime.quit();
+				} else {
+					plus.nativeUI.toast('再按一次退出应用');
+				}
+				setTimeout(function() {
+					backButtonPress = 0;
+				}, 2000);
+				return false;
+			};
+			swipeBack: true //启用右滑关闭功能
+			//获得slider插件对象
+			var gallery = mui('.mui-slider');
+			gallery.slider({
+				interval: 3000 //自动轮播周期，若为0则不自动播放，默认为0；
+			});
+
+			function scaned(t, r, f) {
+				//				czpc.value = r.substring(r.indexOf("=")+1);
+				console.log(JSON.stringify(r));
+				var state1 = app.getState();
+				state1.ddurl = r;
+				app.setState(state1);
+				mui.openWindow({
+					id: 'ddxqinfo',
+					url: 'classify/ddxqinfo.html',
+					show: {
+						aniShow: 'slide-in-right',
+						duration: 300
+					},
+					waiting: {
+						autoShow: false,
+						title: '正在加载...'
+					}
+				});
+			}
+		</script>
+	</body>
+
+</html>

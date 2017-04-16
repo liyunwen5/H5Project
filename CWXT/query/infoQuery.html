@@ -1,0 +1,472 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/style.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />
+		<style>
+			body,
+			.mui-content {
+				background-color: #FFF;
+			}
+			
+			label {
+				width: 25%
+			}
+			
+			.layer {
+				width: 100%;
+				height: 100%;
+				position: fixed;
+				z-index: 999;
+				background-color: rgba(10, 10, 10, 0.3);
+				display: none;
+			}
+			
+			.contentBoxView {
+				position: absolute;
+				left: 10%;
+				right: 10%;
+				top: 30%;
+				height: 95%;
+				z-index: 1000;
+				display: block
+			}
+			.cross {
+				width: 20px;
+				height: 20px;
+				background-color: #fff;
+				border-radius: 14px;
+				border: 1px solid #d9d9d9;
+				display: inline-block;
+				position: absolute;
+				top: -10px;
+				right: -10px;
+				color: #FF6461;
+				z-index: 1002
+			}
+			
+			.cross:after {
+				content: "\2715";
+				font-size: 12px;
+				position: relative;
+				left: 4px;
+				bottom: 2px;
+				cursor: pointer;
+			}
+			
+			.popTop{
+				background-color: #FF6461;
+				color:#fff;
+				font-size: 20px;
+				height: 40px;
+				text-align: center;
+				line-height: 40px;
+				background-color: #FF6461;
+				background-image:url('images/gjj.png');
+				background-repeat:no-repeat;
+				background-position:10px 7px;
+				background-size: 30px;
+			}
+			.chart {
+				min-height: 230px;
+				margin: 0px;
+				padding: 0px;
+			}
+			.layer label{
+				width:50%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav header " style="margin-bottom: 50px;">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">收支汇总</h1>
+			<img class=" mui-btn-link mui-pull-right" id="showUserPicker" src="../images/btn_rili.png" style="width: 25px; margin-top: 8px;height: 25px;"></img>
+		</header>
+		<!--弹窗遮罩层--> 
+		<div class="layer">
+			<div class="contentBoxView">
+				<div class="cross">
+				</div>
+				<div class="popTop">公积金</div>
+				<div class="row mui-input-group">
+					<div class="mui-input-row">
+						<label> 项目类型</label>
+						<label> 金额（元）</label>
+					</div>
+					<div class="mui-input-row">
+						<label> 基数</label>
+						<label> 2000</label>
+					</div>
+					<div class="mui-input-row">
+						<label> 单位缴纳</label>
+						<label> 300</label>
+					</div>
+					<div class="mui-input-row">
+						<label> 个人缴纳</label>
+						<label> 300</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="mui-content">
+			<div class="mui-content-padded">
+				<div class="chart" id="barChart"></div>
+			</div>
+			<div class="mui-content-padded">
+				<h5 style="text-align: center;font-size: 17px;color: #5CACEE;font-weight: bold;">详细信息 (元)</h5>
+				<div class="row mui-input-group" id="tableList">
+					<div class="mui-input-row">
+						<label style="width:30%">月份</label>
+						<label style="width:23%">收入</label>
+						<label style="width:23%">支出</label>
+						<label style="width:24%">余额</label> 
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script type="text/javascript" src="../js/echarts.common.min.js"></script>
+		<script src="../js/jquery-1.11.3.min.js"></script>
+		<script src="../js/mui.picker.min.js"></script>
+		<script src="../js/mui.picker.js"></script>
+		<script src="../js/mui.poppicker.js"></script>
+		<script src="https://cdn.wilddog.com/js/client/current/wilddog.js"></script>
+		<script type="text/javascript">
+			var jsonArr = [] ;
+			var nowYear = new Date().getFullYear();  //当前年份
+			var chaxue = document.getElementById("chaxun");
+			var myChart = echarts.init(document.getElementById('barChart'));
+			var ref = new Wilddog("https://financial.wilddogio.com/accountData"); 
+			mui.init();
+			$(".layer .mui-input-row").eq(0).nextAll().remove();   //第一次打开弹窗先清除静态写死的弹窗内容
+			mui.plusReady(function(){
+				drawComponent();  //绘制页面组件
+				//年份选择
+				var userPicker = new mui.PopPicker();
+				userPicker.setData([{
+					value: '2015',
+					text: '2015'
+				}, {
+					value: '2016',
+					text: '2016'
+				}, {
+					value: '2017',
+					text: '2017'
+				}, {
+					value: '2018',
+					text: '2018'
+				}, {
+					value: '2019',
+					text: '2019'
+				}, {
+					value: '2020',
+					text: '2020'
+				}]);
+				var showUserPickerButton = document.getElementById('showUserPicker');
+				showUserPickerButton.addEventListener('tap', function(event) {
+					userPicker.show(function(items) {
+						drawComponent(items[0].text);
+						console.log("body:"+$("body").html());
+					});
+				}, false);
+			});
+			
+			//绘制页面组件
+			function drawComponent(dateData){ 
+				!dateData&&(dateData="");
+				ref.child("detils").orderByChild('date').on("value", function(snapshot) {
+					var alldatas = generateData(dateData,snapshot.val());  //组织汇总数据
+					var option  = chartConfig(alldatas);   //配置chart数据
+					myChart.setOption(option);  //创建柱状图
+					createHtml(alldatas);  //创建汇总列表
+				}); 
+			}
+			
+			//组织汇总数据-便于界面展示
+			function generateData(dateData,oneJson){
+				var allDatas={"months":[],"income":[],"expense":[],"balance":[]};
+				var monthsJson = {};
+				var user = plus.storage.getItem("username");  //当前登录用户
+				for(var item in oneJson){
+					var monthStr = oneJson[item].date.replace(/-/g,'');
+					var type = oneJson[item].type;  //类型
+					var datastr = monthStr.substr(0,6);  //获取当前数据的年份
+					if(oneJson[item].user==user && (!dateData||(datastr.indexOf(dateData)>=0))){ 
+					console.log("选择："+dateData+" datastr:"+datastr); 
+						!monthsJson[datastr]&&(monthsJson[datastr]={});
+						!monthsJson[datastr][type]&&(monthsJson[datastr][type]=[]);
+						monthsJson[datastr][type].push(oneJson[item].money);
+						!monthsJson[datastr]['0']&&(monthsJson[datastr]['0']=["0"]);
+						!monthsJson[datastr]['1']&&(monthsJson[datastr]['1']=["0"]);
+					} 
+				}
+				if(jQuery.isEmptyObject(monthsJson)){ 
+					mui.toast("该年没有数据~");
+					return false;
+				}
+				console.log(JSON.stringify(monthsJson));
+				for(var key in monthsJson){
+					allDatas["months"].push(key.substr(0,6));
+					var dataInfo = monthsJson[key];
+					for(var item in dataInfo){
+						var type = item;  //类型
+						var sum = 0;  //求合计（按月份+类型）
+						for(var i=0,len=dataInfo[item].length;i<len;i++){
+							sum += parseInt(dataInfo[item][i]);
+						}
+						if(type == '0'){  //收入
+							allDatas.income.push(sum);
+						}
+						else if(type == '1'){ //支出
+							allDatas.expense.push(sum);
+						}
+					}
+				}
+				var incomeSum =0,expenseSum =0,balanceSum =0;
+				for(var j=0;j<allDatas.months.length;j++){
+					incomeSum += allDatas.income[j];
+					expenseSum += allDatas.expense[j];
+					allDatas.balance.push(allDatas.income[j]-allDatas.expense[j]);
+					balanceSum += allDatas.balance[j];
+				}
+				allDatas.income.push(incomeSum);
+				allDatas.expense.push(expenseSum);
+				allDatas.balance.push(balanceSum);
+				allDatas.months.push("总计");
+				console.log(JSON.stringify(allDatas));
+				return allDatas;
+			}
+			
+			//chart配置
+			function chartConfig(data){
+				var option = {
+				tooltip: {
+					trigger: 'axis',
+					axisPointer: {
+						type: 'shadow'
+					}
+				},
+				legend: {
+					data: ['收入', '支出']
+				},
+				grid: {
+					top: '14%',
+					left: '3%',
+					right: '4%',
+					bottom: '6%',
+					containLabel: true
+				},
+				xAxis: [{
+					type: 'category',
+					data: data.months,
+					splitLine: {
+						show: true,
+						lineStyle: {
+							color: '#eee',
+							type: 'solid',
+							width: 1
+						}
+					},
+					axisLine: {
+						show: true,
+						lineStyle: {
+							color: '#d8d8d8',
+							width: 1,
+							type: 'solid'
+						}
+					},
+					axisTick: {
+						show: true,
+						length: 0,
+					},
+					axisLabel: {
+						show: true,
+						interval: 0,
+						rotate: 25,
+						textStyle: {
+							color: '#999',
+							fontFamily: '微软雅黑',
+							fontSize: 12,
+						}
+					}
+				}],
+				yAxis: [{
+					type: 'value',
+					splitLine: {
+						show: true,
+						lineStyle: {
+							color: '#eee',
+							type: 'solid',
+							width: 1
+						}
+					},
+					axisLine: {
+						show: true,
+						lineStyle: {
+							color: '#d8d8d8',
+							width: 1,
+							type: 'solid'
+						}
+					},
+					axisTick: {
+						show: true,
+						length: 15,
+						lineStyle: {
+							color: '#eee',
+							type: 'solid',
+							width: 1
+						}
+					},
+					axisLabel: {
+						formatter: '{value}',
+						margin: 24,
+						textStyle: {
+							color: '#999',
+							fontFamily: '微软雅黑',
+							fontSize: 12,
+						}
+					}
+				}],
+				series: [{
+					name: '收入',
+					type: 'bar',
+					stack: '金额',
+					data: data.income,
+					itemStyle: {
+						normal: {
+							color: '#38bdfe'
+						}
+					}
+				}, {
+					name: '支出',
+					type: 'bar',
+					stack: '金额',
+					data: data.expense,
+					itemStyle: {
+						normal: {
+							color: '#fc7879'
+						}
+					}
+				}]
+			};
+			return option;
+			}
+			
+			//生成统计数据列表
+			function createHtml(data){
+				var $tableList = $("#tableList");
+				$tableList.children("div").eq(0).nextAll().remove();
+				for(var i=0,len=data["months"].length;i<len;i++){
+					var html = '<div class="mui-input-row" onclick="xqrowClick(this)">'+
+							'<label style="width:30%">'+data.months[i]+'</label>'+
+							'<label style="width:23%">'+data.income[i]+'</label>'+
+							'<label style="width:23%">'+data.expense[i]+'</label>'+
+							'<label style="width:24%">'+data.balance[i]+'</label>'+
+						'</div>';
+					$tableList.append(html);
+				}
+			}
+			
+			/**
+			 * 按月统计收入/支出数据
+			 */
+			/*function makeCounts(jsonArr){
+				var theMonth = "",theType = "",tempMonth =　"",tempType = "";
+				var newJsonArr = [],newJson = {},newDataJson = [],newAccount = [];
+				for(var i=0,len=jsonArr.length;i<len;i++){
+					theMonth = jsonArr[i]["date"].replaceAll('-','').substring(0,6);  //获取当前数据年月
+					theType = jsonArr[i]["type"];
+					if(theMonth!=tempMonth){
+						newJson["data"] = newDataJson;
+						newDataJson = [];
+						newJson["month"] = theMonth;
+						tempMonth = theMonth;
+					}
+					if(theMonth==tempMonth && theType!=tempType){
+						newDataJson["account"] = newAccount; 
+						newAccount = [];
+						newDataJson["type"] = theType;
+						tempType = theType;
+					}
+					var thisJson = {"datetime":jsonArr[i]["date"],"money":jsonArr[i]["money"],"describe":jsonArr[i]["describe"]};
+					newAccount.push(thisJson);
+				}
+			}*/
+			
+			/**
+			 * 构建收入、支出json数组
+			 */
+			function createJsonArr(jsonArr){
+				console.log("全部数据："+JSON.stringify(jsonArr)); 
+				var resJsonArr = [];
+				var theMonth = "",theType = "",tempMonth =　"",tempType = "";
+				var newJsonArr = [],newJson = {},newDataJson = [],newAccount = [];
+				for(var i=0,len=jsonArr.length;i<len;i++){
+					theMonth = jsonArr[i]["month"];  //获取当前数据年月
+					theType = jsonArr[i]["type"];
+					if(theMonth!=tempMonth){
+						console.log("月份："+theMonth);
+						newJsonArr.push(newJson);
+						console.log("出错push1"); 
+						newJson["month"] = theMonth;
+						tempMonth = theMonth;
+						newJson[theType] = [];
+					}
+					if(newJson[theType]==undefined)
+						newJson[theType] = [];
+					console.log("出错push2"); 
+					newJson[theType].push({"datetime":jsonArr[i]["date"],"money":jsonArr[i]["money"],"describe":jsonArr[i]["describe"]});
+					console.log("出错push3"); 
+					if(i==len-1)
+						newJsonArr.push(newJson);
+				}
+				console.log("结果："+JSON.stringify(newJsonArr));
+			}
+			
+			function xqrowClick(self) {
+                $(".layer").fadeIn(300);
+                var sblx = $(self).find("label").eq(0).text();  //社保类型
+                var jnjs = $(self).find("label").eq(1).text();  //基数
+                var dwjn = $(self).find("label").eq(2).text();  //单位缴纳
+                var grjn = $(self).find("label").eq(3).text();  //个人缴纳
+                $(".popTop").text(sblx);
+                switch(sblx){
+                	case '公积金':
+                	$(".popTop").css("background-image","url(images/gjj.png)"); 
+                	break;
+                	case '工伤':
+                	$(".popTop").css("background-image","url(images/gsbx.png)"); 
+                	break;
+                	case '医疗':
+                	$(".popTop").css("background-image","url(images/ylbx.png)"); 
+                	break;
+                }
+                var html = "<div class='mui-input-row'>"
+						+"<label> 收入</label>"
+						+"<label> "+jnjs+"</label>"
+						+"</div>"
+						+"<div class='mui-input-row'>"
+						+"<label> 支出</label>"
+						+"<label> "+dwjn+"</label>"
+						+"</div>"
+						+"<div class='mui-input-row'>"
+						+"<label> 余额</label>"
+						+"<label> "+grjn+"</label>"
+						+"</div>";
+				$(".layer .row").append(html);
+            }
+			$(".cross").click(function() {
+                $(".layer").fadeOut(300);
+                $(".layer .mui-input-row").eq(0).nextAll().remove();
+            });
+		</script>
+	</body>
+
+</html>

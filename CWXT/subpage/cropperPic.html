@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" href="../css/cropper.min.css" />
+		<link rel="stylesheet" href="../css/mui.min.css" />
+		<style>
+			#redo {
+				position: fixed;
+				bottom: 20px;
+				left: 20px;
+				font-size: 30px;
+			}
+			
+			#undo {
+				position: fixed;
+				bottom: 20px;
+				right: 20px;
+				font-size: 30px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">截取头像</h1>
+			<a id="save" style="vertical-align: middle;color:#8dc14f;line-height:2.5em;" class="mui-pull-right"><span>保存</span></a>
+		</header>
+		<div style="" class="mui-content">
+			<div style="">
+				<img style="width: 98%;" id="image" src="">
+			</div>
+			<button id="redo" type="button" class="mui-btn mui-btn-danger mui-btn-outlined mui-pull-left"><span class="mui-icon mui-icon-redo"></span></button>
+			<button id="undo" type="button" class="mui-btn mui-btn-danger mui-btn-outlined mui-pull-right"><span class="mui-icon mui-icon-undo"></button>
+		</div>
+		<script type="text/javascript" src="../js/mui.min.js"></script>
+		<script type="text/javascript" src="../js/cropper.min.js"></script>
+		<script src="../js/jquery-1.8.3.js"></script>
+		<script>
+			var image = document.getElementById('image');
+			var cropper = null;
+			var resImg = null;
+			mui.plusReady(function() {
+					var self = plus.webview.currentWebview();
+					image.src = self.imgurl;
+					initCropper();
+				})
+				//在选择或者拍摄完成后跳出裁剪页面并把图片路径传递到此页面
+				//image.src = plus.webview.currentWebview().imgSrc;
+
+			document.getElementById("save").addEventListener("tap", getImg);
+			document.getElementById("redo").addEventListener("tap", function() {
+				cropper.rotate(90);
+			});
+			document.getElementById("undo").addEventListener("tap", function() {
+				cropper.rotate(-90);
+			});
+			//添加文件
+			function appendFile(path) {
+
+			}
+
+			function initCropper() {
+				cropper = new Cropper(image, {
+					aspectRatio: 1 / 1,
+					dragMode: 'crop',//选项：'crop'底图不动 或'move'底图动
+					rotatable: true,
+					minCropBoxWidth: 200,
+					minCropBoxHeight: 200,
+					minCanvasWidth: 200,
+					minCanvasHeight: 200,
+					minContainerWidth: 200,
+					minContainerHeight: 200,
+				});
+			}
+
+			function getImg() {  
+				plus.webview.close("personinfo");
+				resImg = cropper.getCroppedCanvas({
+					width: 200,
+					height: 200,
+				}).toDataURL();
+				var img = new Image();
+				img.src = resImg;
+				img.onload = function() { 
+					var that = this;
+					//生成比例 
+					var w = that.width,
+						h = that.height,
+						scale = w / h;
+					w = 480 || w; //480  你想压缩到多大
+					h = w / scale;
+					//生成canvas
+					var canvas = document.createElement('canvas');
+					var ctx = canvas.getContext('2d');
+					$(canvas).attr({
+						width: w,
+						height: h,
+					});
+					ctx.drawImage(that, 0, 0, w, h);
+					var base64 = canvas.toDataURL('image/jpeg', 1 || 0.8); //1z 表示图片质量，越低越模糊。
+					mui.openWindow({
+						id: 'personinfo',
+						url: 'personinfo.html',
+						show: {
+							aniShow: 'slide-in-right'
+								//,duration: 300
+						},
+						waiting: {
+							autoShow: false,
+							title: '正在加载...'
+						},
+						extras: {
+							//三个动态参数
+							imgurl: base64,
+						}
+						
+					});
+					
+				}
+
+			}
+		</script>
+	</body>
+
+</html>

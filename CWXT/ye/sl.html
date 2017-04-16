@@ -1,0 +1,266 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/style.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />
+		<style>
+			html,
+			body,
+			.mui-content {
+				height: 0px;
+				margin: 0px;
+				background-color: #efeff4;
+			}
+			
+			h5.mui-content-padded {
+				margin-left: 3px;
+				margin-top: 20px !important;
+			}
+			
+			h5.mui-content-padded:first-child {
+				margin-top: 12px !important;
+			}
+			
+			.ui-alert {
+				text-align: center;
+				padding: 20px 10px;
+				font-size: 16px;
+			}
+			
+			.datetimeImg {
+				width: 25px;
+				height: 25px;
+				margin-top: 7px;
+				float: right;
+			}
+			
+			.mui-title {
+				font-size: 18px;
+			}
+			
+			.img {
+				height: 40px;
+			}
+			
+			#img_src {
+				position: absolute;
+				bottom: 10px;
+				right: 40px;
+				width: 50px;
+				height: 50px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav header">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">钱的收入</h1>
+		</header>
+		<div class="mui-content">
+			<form class="mui-input-group">
+				<div class="mui-input-row">
+					<label>日期</label>
+					<span id="rqspan" style="float: left;vertical-align: middle;line-height: 40px;color:#A9A9A9">点击选择日期</span>
+					<img class="datetimeImg" src="../images/datetime.png" style="margin-right: 10px;">
+				</div>
+				<div class="mui-input-row">
+					<label>名称</label>
+					<input type="text" id="srmc" class="mui-input" placeholder="收入来源名称">
+					<img class="datetimeImg" src="../images/mc.png" style="position: absolute;right: 10px;">
+				</div>
+				<div class="mui-input-row">
+					<label>类型</label>
+					<select id="accountType">
+					</select>
+					<img class="datetimeImg" src="../images/mc.png" style="position: absolute;right: 10px;">
+				</div>
+				<script type="text/javascript" src="../sysconfig/paramDefine.js"></script>
+				<script src="../js/jquery-1.8.3.js"></script>
+				<script type="text/javascript">
+					var html = '<option value="" disabled>请选择...</option>' +
+						'<option value="' + sys_accountTypeCard_id + '">' + sys_accountTypeCard_name + '</option>' +
+						'<option value="' + sys_accountTypeCash_id + '">' + sys_accountTypeCash_name + '</option>' +
+						'<option value="' + sys_accountTypeZfb_id + '">' + sys_accountTypeZfb_name + '</option>' +
+						'<option value="' + sys_accountTypeWechat_id + '">' + sys_accountTypeWechat_name + '</option>' +
+						'<option value="' + sys_accountTypeQq_id + '">' + sys_accountTypeQq_name + '</option>';
+					$("#accountType").append(html);
+				</script>
+				<div class="mui-input-row">
+					<label>收入</label>
+					<input type="number" id="sr" class="mui-input" placeholder="请输入人民币">
+					<img class="datetimeImg" src="../images/CNY.png" style="position: absolute;right: 10px;">
+				</div>
+				<div class="mui-input-row">
+					<label>备注</label>
+					<input type="text" id="note" class="mui-input" placeholder="请输入备注">
+					<img class="datetimeImg" src="../images/note.png" style="position: absolute;right: 10px;">
+				</div>
+				<div class="mui-table-view-cell">
+					<a id="img" class="mui-navigate-right" style="padding-top: 20px;">图片
+						<span class="mui-pull-right img">
+							<img class="head-img mui-action-preview" id="img_src" src="../images/head-default.jpg" />
+						</span>
+					</a>
+				</div>
+
+			</form>
+			<div class="mui-content-padded" style="padding: 10px 10px;">
+				<button type="button" id="add" class="mui-btn mui-btn-block mui-btn-positive" style="line-height: 1.0;background: #3BBFFF;">确认</button>
+			</div>
+		</div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/app.js"></script>
+	<script src="../js/mui.picker.min.js"></script>
+	<script src="https://cdn.wilddog.com/js/client/current/wilddog.js"></script>
+	<script type="text/javascript" src="../commJs/commMethod.js"></script>
+	<script type="text/javascript" src="../js/img_sc.js"></script>
+	<script type="text/javascript">
+		var imgsrc = document.getElementById("img_src");
+		var imgurl = null;
+		(function($) {
+
+			function trim(str) { //删除左右两端的空格
+				　　
+				return str.replace(/(^\s*)|(\s*$)/g, "");　　
+			}
+			$.init();
+			var network = false;
+			var ref = null;
+			var rq = document.getElementById("rqspan"); //日期选择按钮
+			//var add=document.getElementById("add");//确认
+			mui.plusReady(function() {
+				var webview = plus.webview.currentWebview();
+			});
+			rq.addEventListener('tap', function() {
+				var optionsJson = this.getAttribute('data-options');
+				var options = JSON.parse(optionsJson);
+				var id = this.getAttribute('id');
+				/*
+				 * 首次显示时实例化组件
+				 * 示例为了简洁，将 options 放在了按钮的 dom 上
+				 * 也可以直接通过代码声明 optinos 用于实例化 DtPicker
+				 */
+				var picker = new $.DtPicker(options);
+				picker.show(function(rs) {
+
+					rq.innerText = rs.text; //rq为ID名，innerText 方法调用直接使用id名.innerText就可以了
+					rq.style.color = "#000"; //修改日期字体颜色
+
+					picker.dispose();
+				});
+			}, false);
+			//更换头像
+			mui(".mui-table-view-cell").on("tap", "#img", function(e) {
+				if(mui.os.plus) {
+					var a = [{
+						title: "拍照"
+					}, {
+						title: "从手机相册选择"
+					}];
+					plus.nativeUI.actionSheet({
+						title: "修改头像",
+						cancel: "取消",
+						buttons: a
+					}, function(b) {
+						switch(b.index) {
+							case 0:
+
+								break;
+							case 1:
+								var cmr = plus.camera.getCamera();
+								cmr.captureImage(function(p) {
+										plus.io.resolveLocalFileSystemURL(p, function(entry) {
+											//转化本地绝对路径
+											var urlHope = plus.io.convertLocalFileSystemURL(p);
+											appendFile(urlHope);
+											console.log(urlHope);
+											
+										});
+									}, function(error) {
+										console.log("---" + "Capture image failed: " + error.message);
+									}, {} //建议使用系统匹配路径
+								);
+
+								break;
+							case 2:
+								plus.gallery.pick(function(p) {
+									appendFile(p);
+								});
+
+								break;
+							default:
+								break
+						}
+					})
+				}
+
+			});
+			//显示图片
+			function appendFile(path) {
+				imgsrc.src = path;
+				imgsc(path);
+
+			}
+			add.addEventListener('tap', function() {
+				var stateing = app.getState()
+				//		stateing.picUrl = "";
+				var nativewaiting = plus.nativeUI.showWaiting("正在加载");
+
+				ref = new Wilddog("https://financial.wilddogio.com/accountData");
+				if(!ref) {
+					mui.toast("当前网络不给力，请稍后再试");
+				} else {
+					var check = true;
+					mui(".mui-input-row input,#rqspan").each(function() {
+						if((this.tagName.toLowerCase() == "input" && (!this.value || trim(this.value) == "")) || (this.tagName.toLowerCase() == "span" && this.innerText == "点击选择日期")) {
+							var label = this.previousElementSibling;
+							nativewaiting.close();
+							mui.alert(label.innerText + "不允许为空");
+							check = false;
+							return false;
+						}
+					});
+					if(check) {
+						var reg = /^\d+(\.\d+)?$/;
+						if(reg.test(sr.value)) {
+							var newRef = ref.child('detils').push({
+								"user":plus.storage.getItem("username"),
+								"date": rqspan.innerText,
+								"money": sr.value,
+								"type": "0",
+								"accountType": accountType.value,
+								"describe": srmc.value,
+								"note": note.value,
+								"picUrl": stateing.picUrl,
+								"operateTime": _getNowFormatDateTime()
+							});
+
+							mui.toast("添加成功");
+							nativewaiting.close();
+							add.innerHTML = '上传完成';
+							changeStatus(); //更改确定按钮状态
+						} else {
+							mui.toast("请输入金额!");
+						}
+
+					}
+				}
+
+			});
+
+		})(mui);
+
+		//修改按钮状态
+		function changeStatus() {
+			$("#add").css("background-color", "##6cb248").attr("disabled", "disabled");
+		}
+	</script>
+
+</html>

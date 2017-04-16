@@ -1,0 +1,496 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/style.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+		<link rel="stylesheet" href="../css/mui.picker.css" />
+		<link rel="stylesheet" href="../css/mui.dtpicker.css" />
+		<link rel="stylesheet" href="../css/mui.poppicker.css" />
+
+	</head>
+	<style>
+		.mui-pull-bottom-wrapper {
+			text-align: center;
+		}
+		
+		.mui-bar~.mui-content .mui-fullscreen {
+			top: 44px;
+			height: auto;
+		}
+		
+		.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active {
+			color: red;
+		}
+		
+		.title {
+			margin: 35px 15px 10px;
+			font-size: 21px;
+		}   
+		#__mui-imageview__.mui-fullscreen{
+			position: fixed;
+			z-index: 20;
+			background-color: #000;
+		}
+	</style>
+
+	<body>
+		<!--侧滑菜单容器-->
+		<div id="offCanvasWrapper" class="mui-off-canvas-wrap mui-draggable mui-slide-in">
+			<!--菜单部分-->
+			<aside id="offCanvasSide" class="mui-off-canvas-right">
+				<div class="title">条件查询</div>
+				<ul class="mui-table-view mui-table-view-chevron mui-table-view-inverted">
+					<li class="mui-table-view-cell mui-collapse">
+						<a class="mui-navigate-right" href="#">交易渠道<span id="jyqdText" data-id="" style="float: right;">全部</span></a>
+						<ul class="mui-table-view mui-table-view-chevron mui-table-view-inverted" id="jyqdList">
+							<!--<li class="mui-table-view-cell">iOS
+									</li>
+									<li class="mui-table-view-cell">Android
+									</li>
+									<li class="mui-table-view-cell">HTML5
+									</li>-->
+						</ul>
+						<script type="text/javascript" src="../sysconfig/paramDefine.js"></script>
+						<script src="../js/jquery-1.8.3.js"></script>
+						<script type="text/javascript">
+							var html = '<li class="mui-table-view-cell" data-id="'+sys_accountTypeCard_id+'">' + sys_accountTypeCard_name + '</li>' +
+								'<li class="mui-table-view-cell" data-id="'+sys_accountTypeCash_id+'">' + sys_accountTypeCash_name + '</li>' +
+								'<li class="mui-table-view-cell" data-id="'+sys_accountTypeZfb_id+'">' + sys_accountTypeZfb_name + '</li>' +
+								'<li class="mui-table-view-cell" data-id="'+sys_accountTypeWechat_id+'">' + sys_accountTypeWechat_name + '</li>' +
+								'<li class="mui-table-view-cell" data-id="'+sys_accountTypeQq_id+'">' + sys_accountTypeQq_name + '</li>';
+							$("#jyqdList").append(html);
+							jyqdList.addEventListener("tap",function(event){
+								if(event.target.nodeName.toLowerCase()=="li"){
+									$("#jyqdText")[0].innerText = event.target.innerText; 
+									$("#jyqdText")[0].dataset.id = event.target.dataset.id;
+								}
+							});
+						</script>
+					</li>
+					<li class="mui-table-view-cell  mui-collapse" id="liKsrq" data-options='{"type":"date","beginYear":2015,"endYear":2017}'>
+						<a class="mui-navigate-right">
+							开始日期<span id="ksrqText" value="" style="float: right;"></span> 
+						</a>
+						<!--<ul class="mui-table-view mui-table-view-chevron mui-table-view-inverted" id="jyqdList">
+							<li class="mui-table-view-cell">iOS
+									</li>
+									<li class="mui-table-view-cell">Android
+									</li>
+									<li class="mui-table-view-cell">HTML5
+									</li>
+						</ul>-->  
+  
+					</li>
+					<li class="mui-table-view-cell" id="liJsrq" data-options='{"type":"date","beginYear":2014,"endYear":2016}'>
+						<a class="mui-navigate-right">
+							结束日期<span id="JsrqText" value="" style="float: right;"></span>
+						</a>
+					</li>
+
+				</ul>
+				<script type="text/javascript">
+					var today = new Date();
+					var year = today.getFullYear();
+					var month = today.getMonth()+1;
+					var day = today.getDate();
+					var dateStrKs = year+'-'+(month<10?('0'+month):month)+'-'+'01';
+					var dateStrJs = year+'-'+(month<10?('0'+month):month)+'-'+(day<10?('0'+day):day);
+					beginDate =  dateStrKs,   //开始日期
+					beginDate = beginDate.replace(/-/g,'');
+					endDate = dateStrJs;      //结束日期
+					endDate = endDate.replace(/-/g,'');
+					$("#ksrqText").text(dateStrKs);
+					$("#JsrqText").text(dateStrJs);
+				</script>
+				<p style="margin: 10px 15px;">
+					<button id="queryBtn" type="button" class="mui-btn mui-btn-danger mui-btn-block" style="padding: 5px 20px;">查询</button>
+				</p>
+			</aside>
+			<div class="mui-inner-wrap">
+				<header class="mui-bar mui-bar-nav header " style="margin-bottom: 50px;">
+					<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+					<h1 class="mui-title">账本记录</h1>
+					<a id="offCanvasBtn" href="#offCanvasSide" class="mui-icon mui-action-menu mui-pull-right" style="background: url(../images/search.png) no-repeat center;background-size:20px 20px;height:100%;width:44px"></a>
+					<!--<img class=" mui-btn-link mui-pull-right" data-options='{"type":"date","beginYear":2004,"endYear":2026}' id="chaxun" src="../images/btn_rili.png" style="width: 25px; margin-top: 8px;height: 25px;"></img>-->
+				</header>
+				<nav class="mui-bar mui-bar-tab">
+					<span class="span-price mui-pull-right" style="background: #3BBFFF; text-align: center; font-size:14px ;color: #fff; padding: 10px;"><span id="totalTitle">总额</span><span id="total" style="font-size: 15px; font-size:14px ; color: #fff;">￥0</span></span>
+					<span class="span-price mui-pull-right" style="font-size: 15px; margin-top: 10px; ">笔数:<span id="orderCount" style="font-size: 15px; padding: 10px 10px 10px 0;  color: #3BBFFF;">0笔</span></span>
+				</nav>
+				<div class="mui-content">
+					<div id="slider" class="mui-slider mui-fullscreen">
+						<div id="sliderSegmentedControl" class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+							<div class="mui-scroll" style="left: 40px;right: 40px;">
+								<a id="qb" class="mui-control-item mui-active" href="#item1mobile">
+									全部
+								</a>
+								<a id="yqh" class="mui-control-item " href="#item2mobile">
+									收入
+								</a>
+								<a id="dqh" class="mui-control-item" href="#item3mobile">
+									支出
+								</a>
+							</div>
+						</div>
+						<div class="mui-slider-group">
+							<div id="item1mobile" class="mui-slider-item mui-control-content ">
+								<div id="scroll1" class="mui-scroll-wrapper">
+									<div class="mui-scroll">
+										<ul class="mui-table-view" id="quanbu">
+
+										</ul>
+									</div>
+								</div>
+							</div>
+							<div id="item2mobile" class="mui-slider-item mui-control-content ">
+								<div id="scroll2" class="mui-scroll-wrapper">
+									<div class="mui-scroll">
+										<ul class="mui-table-view" id="yiquhuo">
+
+										</ul>
+									</div>
+								</div>
+							</div>
+							<div id="item3mobile" class="mui-slider-item mui-control-content">
+								<div id="scroll3" class="mui-scroll-wrapper">
+									<div class="mui-scroll">
+										<ul class="mui-table-view" id="daiquhuo">
+
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="mui-off-canvas-backdrop"></div>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/jquery-1.11.3.min.js"></script>
+		<script src="../js/mui.picker.min.js"></script>
+		<script src="../js/mui.pullToRefresh.js"></script>
+		<script src="../js/mui.pullToRefresh.material.js"></script>
+		<script src="https://cdn.wilddog.com/js/client/current/wilddog.js"></script>
+		<script>
+		 	//侧滑容器父节点
+			var offCanvasWrapper = mui('#offCanvasWrapper');
+			mui('.mui-slider').slider().setStopped(true);
+			var liKsrq = document.getElementById("liKsrq");
+			var liJsrq = document.getElementById("liJsrq");
+			var ksrqText = document.getElementById("ksrqText");
+			var jsrqText = document.getElementById("jsrqText");
+			var yiquhuo = document.getElementById("yiquhuo");
+			var daiquhuo = document.getElementById("daiquhuo");
+			var quanbu = document.getElementById("quanbu");
+			var orderCount = document.getElementById("orderCount");
+			var total = document.getElementById("total");
+			var tab_qb = document.getElementById("qb"); //tab-全部
+			var tab_yqh = document.getElementById("yqh"); //tab-已取货
+			var title_dqh = document.getElementById("dqh"); //tab-已付款
+			var beginDate,endDate, staticid, pagenum; //日期，状态 0全部 1已取货 2未取货，页码
+			var jsonObj = {};
+			var totalTitle = document.getElementById("totalTitle");
+			var jyqdList = document.getElementById("jyqdList");  //交易渠道下拉框
+			var queryBtn = document.getElementById("queryBtn"); //侧滑查询按钮
+			queryBtn.addEventListener("tap",function(){
+				updateMsgCount(staticid, pagenum);
+				offCanvasWrapper.offCanvas('close');   //关闭侧滑
+			});
+			document.getElementById("offCanvasBtn").addEventListener("tap",function(){
+				
+//				jyqdList.innerHTML = "";
+				/*	var html = '<li class="mui-table-view-cell" data-id="'+sys_accountTypeCard_id+'">' + sys_accountTypeCard_name + '</li>' +
+					'<li class="mui-table-view-cell" data-id="'+sys_accountTypeCash_id+'">' + sys_accountTypeCash_name + '</li>' +
+					'<li class="mui-table-view-cell" data-id="'+sys_accountTypeZfb_id+'">' + sys_accountTypeZfb_name + '</li>' +
+					'<li class="mui-table-view-cell" data-id="'+sys_accountTypeWechat_id+'">' + sys_accountTypeWechat_name + '</li>' +
+					'<li class="mui-table-view-cell" data-id="'+sys_accountTypeQq_id+'">' + sys_accountTypeQq_name + '</li>';
+				$("#jyqdList").append(html);
+				jyqdList.addEventListener("tap",function(event){
+					if(event.target.nodeName.toLowerCase()=="li"){
+						$("#jyqdText")[0].innerText = event.target.innerText; 
+					}
+				});*/
+			});
+			tab_qb.addEventListener("tap", function() {
+				staticid = 0;
+				pagenum = 0;
+				updateMsgCount(staticid, pagenum);
+			});
+			tab_yqh.addEventListener("tap", function() {
+				staticid = 1;
+				pagenum = 0;
+				updateMsgCount(staticid, pagenum);
+			});
+			title_dqh.addEventListener("tap", function() {
+				staticid = 2;
+				pagenum = 0;
+				updateMsgCount(staticid, pagenum);
+			}); 
+			//图片点击放大，冒泡事件
+			document.querySelector(".mui-slider-group").addEventListener("tap",function(event){
+					if(event.target.tagName.toLowerCase()=='img'){   //冒泡事件  ，将点击事件绑定在外围容器上，但是只有点击img标签才响应点击事件
+						var imgs = event.target;
+						var slider = document.createElement("div");
+						slider.setAttribute("id", "__mui-imageview__");
+						slider.classList.add("mui-slider");
+						slider.classList.add("mui-fullscreen"); 
+						slider.style.display = "none";
+						slider.addEventListener("tap", function() {
+							slider.style.display = "none";
+						});
+						slider.addEventListener("touchmove", function(event) {
+							event.preventDefault();
+						})
+						var slider_group = document.createElement("div");
+						slider_group.setAttribute("id", "__mui-imageview__group");
+						slider_group.classList.add("mui-slider-group");
+	
+						var item = document.createElement("div");
+						item.classList.add("mui-slider-item");
+						var a = document.createElement("a");
+						var img = document.createElement("img");
+						img.setAttribute("src", imgs.src);
+						a.appendChild(img);
+						item.appendChild(a);
+						slider_group.appendChild(item);
+						slider.appendChild(slider_group);
+						document.body.appendChild(slider);
+						var _slider = mui(slider).slider();
+						//给图片添加点击事件，触发预览显示；
+						slider.style.display = "block";
+						_slider.refresh();
+						_slider.gotoItem(0, 0);
+//						alert(document.getElementsByTagName('html')[0].innerHTML);
+				}
+			});
+			mui.plusReady(function() {
+				staticid = 0;
+				pagenum = 0;
+				updateMsgCount(staticid, pagenum);
+			});
+
+			(function($) {
+
+				//阻尼系数
+				var deceleration = mui.os.ios ? 0.003 : 0.0009;
+				$('.mui-scroll-wrapper').scroll({
+					bounce: false,
+					indicators: true, //是否显示滚动条
+					deceleration: deceleration
+				});
+				$.ready(function() {
+					//循环初始化所有下拉刷新，上拉加载。
+					$.each(document.querySelectorAll('.mui-slider-group .mui-scroll'), function(index, pullRefreshEl) {
+						$(pullRefreshEl).pullToRefresh({
+
+							up: {
+								callback: function() {
+									var self = this;
+									setTimeout(function() {
+										var ul = self.element.querySelector('.mui-table-view');
+										ul.appendChild(createFragment(ul, index, 15));
+										self.endPullUpToRefresh();
+									}, 1000);
+								}
+							}
+						});
+					});
+					//下拉加载
+					var createFragment = function(ul, index, count, reverse) {
+						var fragment = document.createDocumentFragment();
+						var li;
+
+						pagenum += 1;
+						var jsonData = null;
+						if(jsonData != null) {
+							var data = jsonData.obj;
+							for(var i = 0; i < data.length; i++) {
+								li = document.createElement('li');
+								li.className = 'mui-table-view-cell mui-media';
+
+								li.innerHTML = "<a><img class='mui-media-object mui-pull-left' src='" + data[i].image + "' style='max-width: 80px; height: 80px;'>" +
+									"<div class='mui-media-body mui-center' style='margin-left: 100px;'>" +
+									"<p  style='font-size: 13px; color: red;'>" + data[i].time + "</p>" +
+									"<p class='usr-addr'>订单编号：<span  style='font-size: 13px;'>" + data[i].order_id + "</span></p>" +
+									"<p >" + data[i].goods_name + "</p>" +
+									"<p class=' '><span  style='color: red;'>￥" + data[i].goods_amount + "</span>" +
+									"<span class='span-price mui-pull-right' style='color: red;' >" + (data[i].order_status == "40" ? "已取货" : "未取货") + "</span></p></div></a>";
+
+								fragment.appendChild(li);
+							}
+						} else {
+							fragment == null;
+							mui.toast("没有更多数据");
+							mui('#pullrefresh').pullRefresh().refresh(false);
+						}
+
+						return fragment;
+					};
+				});
+				//开始日期
+				liKsrq.addEventListener('tap', function() {
+					var optionsJson = liKsrq.getAttribute('data-options') || '{}';
+					var options = JSON.parse(optionsJson);
+					var picker = new $.DtPicker(options);
+					picker.show(function(rs) {
+						beginDate = rs.text;
+						ksrqText.innerText = beginDate;
+						beginDate = beginDate.replace(/-/g,'');
+						picker.dispose();
+					});
+				}, false);
+				//结束日期
+				liJsrq.addEventListener('tap', function() {
+					var optionsJson = liKsrq.getAttribute('data-options') || '{}';
+					var options = JSON.parse(optionsJson);
+					var picker = new $.DtPicker(options);
+					picker.show(function(rs) {
+						endDate = rs.text;
+						JsrqText.innerText = endDate;
+						endDate = endDate.replace(/-/g,'');
+						picker.dispose();
+					});
+				}, false);
+			})(mui);
+			//请求
+			function updateMsgCount(stateid, pagenum) {
+				var jsonArr = [],
+					cont = 0,
+					sum = 0;
+				var ref = new Wilddog("https://financial.wilddogio.com/accountData");
+				var jyqdId = $("#jyqdText")[0].dataset.id;   //交易渠道ID
+				var user = plus.storage.getItem("username");  //当前登录用户
+				switch(stateid) {
+					case 0:
+						ref.child("detils").orderByChild('date').on("value", function(snapshot) {
+							jsonObj = {};
+							cont = 0;
+							sum = 0;
+							oneJson = snapshot.val();
+							for(var item in oneJson) {
+								var dateStr = oneJson[item].date.replace(/-/g, '');
+								dataStr = dateStr.substr(0, 8);
+								if(oneJson[item].user==user&& parseInt(dateStr) >= parseInt(beginDate) &&　parseInt(dateStr) <= parseInt(endDate) && (!jyqdId ||oneJson[item].accountType==jyqdId )) {
+									cont++;
+									//sum += parseInt(oneJson[item].money);
+									sum = (sum + eval(oneJson[item].type == '0' ? ('+' + oneJson[item].money) : ('-' + oneJson[item].money)));
+									//alert(sum+"  "+eval(oneJson[item].type=='0'?('+'+oneJson[item].money):('-'+oneJson[item].money)));
+									jsonArr.push(oneJson[item]);
+								}
+							}
+							jsonObj.cont = cont;
+							jsonObj.sum = sum;
+							jsonObj.data = jsonArr;
+							console.log(JSON.stringify(jsonObj));
+							initdata(stateid);
+						});
+						break;
+					case 1:
+						ref.child("detils").orderByChild('date').on("value", function(snapshot) {
+							jsonObj = {};
+							cont = 0;
+							sum = 0;
+							oneJson = snapshot.val();
+							for(var item in oneJson) {
+								var dateStr = oneJson[item].date.replace(/-/g, '');
+								dataStr = dateStr.substr(0, 8);
+								if(oneJson[item].user==user&&oneJson[item].type == '0' && parseInt(dateStr) >= parseInt(beginDate) && parseInt(dateStr) <= parseInt(endDate)&&(!jyqdId ||oneJson[item].accountType==jyqdId )) {
+									cont++;
+									sum += parseFloat(oneJson[item].money);
+									jsonArr.push(oneJson[item]);
+								}
+							}
+							jsonObj.cont = cont;
+							jsonObj.sum = sum;
+							jsonObj.data = jsonArr;
+							console.log(JSON.stringify(jsonObj));
+							initdata(stateid);
+						});
+						break;
+					case 2:
+						ref.child("detils").orderByChild('date').on("value", function(snapshot) {
+							jsonObj = {};
+							cont = 0;
+							sum = 0;
+							oneJson = snapshot.val();
+							for(var item in oneJson) {
+								var dateStr = oneJson[item].date.replace(/-/g, '');
+								dataStr = dateStr.substr(0, 8);
+								if(oneJson[item].user==user&&oneJson[item].type == '1' && parseInt(dateStr) >= parseInt(beginDate) &&  parseInt(dateStr) <= parseInt(endDate)&&(!jyqdId ||oneJson[item].accountType==jyqdId )) {
+									cont++;
+									sum += parseFloat(oneJson[item].money);
+									jsonArr.push(oneJson[item]);
+								}
+							}
+							jsonObj.cont = cont;
+							jsonObj.sum = sum;
+							jsonObj.data = jsonArr;
+							initdata(stateid);
+						});
+						break;
+					default:
+						break;
+				}
+			}
+			/**加载数据*/
+			function initdata(stateid) {
+				jsonData = jsonObj.data;
+				console.log(JSON.stringify(jsonObj.data));
+				if(jsonData != null) {
+					if(stateid == 0) {
+						totalTitle.innerText = "余额";
+					} else if(stateid == 1) {
+						totalTitle.innerText = "收入";
+					} else if(stateid == 2) {
+						totalTitle.innerText = "支出";
+					}
+					total.innerText = "￥" + jsonObj.sum;
+					orderCount.innerText = jsonObj.cont + "笔";
+					ddItemHtmls = "";
+					quanbu.innerHTML = "";
+					var data = jsonData;
+
+					for(var i = 0; i < data.length; i++) {
+						var ddItemHtml = "";
+						ddItemHtml = "<li class='mui-table-view-cell mui-media'>" +
+							"<a><img class='mui-media-object mui-pull-left' src='" + data[i].picUrl + "' style='max-width: 80px; height: 80px;'>" +
+							"<div class='mui-media-body mui-center' style='margin-left: 100px;'>" +
+							"<p  style='font-size: 13px; color: red;'>" + data[i].date + "</p>" +
+							"<p class='usr-addr' style='font-size: 13px;'>费用类型：<span>" + data[i].describe + "</span></p>" +
+							"<p >" + (data[i].note == undefined ? "备注：无" : ("备注：" + data[i].note)) + "</p>" +
+							"<p class=' '><span  style='color: red;'>" + (data[i].type == "0" ? ('￥+' + data[i].money) : ('￥-' + data[i].money)) + "</span>" +
+							"<span class='span-price mui-pull-right' style='color: red;' >" + (data[i].type == "0" ? "收入" : "支出") + "</span></p></div></a>" +
+							"</li>";
+
+						ddItemHtmls = ddItemHtmls + ddItemHtml;
+
+					}
+					if(stateid === 1) {
+						yiquhuo.innerHTML = ddItemHtmls;
+						mui("#scroll2").scroll().scrollTo(0, 0, 0);
+					} else if(stateid === 2) {
+						daiquhuo.innerHTML = ddItemHtmls;
+						mui("#scroll3").scroll().scrollTo(0, 0, 0);
+					} else if(stateid === 0) {
+						quanbu.innerHTML = ddItemHtmls;
+						mui("#scroll1").scroll().scrollTo(0, 0, 0);
+					}
+
+				} else {
+					yiquhuo.innerHTML = "";
+					daiquhuo.innerHTML = "";
+					quanbu.innerHTML = "";
+				}
+			}
+		</script>
+
+	</body>
+
+</html>

@@ -1,0 +1,250 @@
+{
+  "index.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "fonts/mui.ttf",
+      "css/app.css",
+      "/js/js/mui.min.js",
+      "js/jquery-1.11.3.min.js"
+    ],
+    "refer": [
+      "ye/sl.html",
+      "ye/zc.html",
+      "ye/fy.html"
+    ]
+  },
+  "ye/sl.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "js/mui.picker.min.js",
+      "ye/sl.html",
+      "css/mui.picker.min.css",
+      "css/app.css",
+      "images/datetime.png/",
+      "images/CNY.png/",
+      "images/datetime.png",
+      "images/CNY.png",
+      "images/mc.png",
+      "images/note.png",
+      "js/jquery-1.11.3.min.js",
+      "css/style.css",
+      "js/jquery-1.8.3.js",
+      "sysconfig/paramDefine.js",
+      "commJs/commMethod.js",
+      "images/head-default.jpg",
+      "js/img_sc.js",
+      "js/app.js"
+    ],
+    "refer": [
+      "ye/sl.html"
+    ]
+  },
+  "lz.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "css/app.css"
+    ],
+    "refer": []
+  },
+  "chartDemo.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "js/echarts.common.min.js",
+      "js/jquery.js",
+      "images/gjj.png",
+      "images/gsbx.png",
+      "images/ylbx.png"
+    ],
+    "refer": []
+  },
+  "ye/zc.html": {
+    "resources": [
+      "js/mui.picker.min.js",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "css/mui.picker.min.css",
+      "images/datetime.png",
+      "images/CNY.png",
+      "images/note.png",
+      "images/mc.png",
+      "css/style.css",
+      "js/jquery-1.8.3.js",
+      "sysconfig/paramDefine.js",
+      "commJs/commMethod.js",
+      "images/head-default.jpg",
+      "js/img_sc.js",
+      "js/app.js"
+    ],
+    "refer": []
+  },
+  "ye/fy.html": {
+    "resources": [
+      "js/mui.picker.min.js",
+      "css/mui.picker.min.css",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "images/datetime.png",
+      "images/CNY.png",
+      "images/note.png"
+    ],
+    "refer": []
+  },
+  "main.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "css/style.css",
+      "images/main/btn_saoyisao.png",
+      "images/head-default.jpg",
+      "js/app.js",
+      "js/mui.picker.min.js",
+      "images/main/btn_tongji.png",
+      "images/main/btn_shenji.png",
+      "fonts/mui.ttf",
+      "images/farmer.png",
+      "images/main/sl.png",
+      "images/main/btn_cx.png",
+      "images/main/btn_lr.png"
+    ],
+    "refer": [
+      "ye/main.html",
+      "ye/index.html",
+      "query/infoQuery.html",
+      "query/ddcxinfo.html",
+      "subpage/personinfo.html",
+      "login.html",
+      "ye/sl.html",
+      "ye/zc.html"
+    ]
+  },
+  "ye/index.html": {
+    "resources": [
+      "js/jquery-1.11.3.min.js",
+      "fonts/mui.ttf",
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "images/main/btn_shenji.png",
+      "images/main/sl.png",
+      "images/main/zc.png",
+      "css/style.css"
+    ],
+    "refer": [
+      "ye/zc.html",
+      "ye/sl.html"
+    ]
+  },
+  "query/infoQuery.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "js/echarts-all.js",
+      "fonts/mui.ttf",
+      "js/jquery-1.11.3.min.js",
+      "js/echarts.common.min.js",
+      "images/btn_rili.png",
+      "css/style.css",
+      "js/mui.picker.min.js",
+      "css/mui.picker.min.css",
+      "js/mui.picker.js",
+      "js/mui.poppicker.js"
+    ],
+    "refer": []
+  },
+  "query/ddcxinfo.html": {
+    "resources": [
+      "js/mui.pullToRefresh.js",
+      "js/mui.picker.min.js",
+      "js/jquery-1.11.3.min.js",
+      "css/common.css",
+      "js/mui.pullToRefresh.material.js",
+      "css/mui.dtpicker.css",
+      "fonts/mui.ttf",
+      "css/style.css",
+      "css/mui.poppicker.css",
+      "css/mui.picker.min.css",
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "images/btn_rili.png",
+      "images/search.png",
+      "sysconfig/paramDefine.js",
+      "js/jquery-1.8.3.js"
+    ],
+    "refer": []
+  },
+  "query/muihtml.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css"
+    ],
+    "refer": []
+  },
+  "login.html": {
+    "resources": [
+      "css/mui.min.css",
+      "js/app.js",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/style.css",
+      "js/mui.enterfocus.js",
+      "js/updata_file.js"
+    ],
+    "refer": [
+      "main.html",
+      "reg.html",
+      "forget_password.html"
+    ]
+  },
+  "subpage/personinfo.html": {
+    "refer": [
+      "subpage/cropperPic.html"
+    ],
+    "resources": [
+      "images/head-default.jpg",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "css/style.css",
+      "js/mui.view.js"
+    ]
+  },
+  "subpage/cropperPic.html": {
+    "resources": [
+      "css/cropper.min.css",
+      "js/jquery-1.8.3.js",
+      "js/cropper.min.js",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "subpage/personinfo.html"
+    ]
+  },
+  "reg.html": {
+    "resources": [
+      "fonts/mui.ttf",
+      "js/app.js",
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "css/style.css",
+      "js/ajaxCommon.js"
+    ],
+    "refer": []
+  },
+  "forget_password.html": {
+    "resources": [
+      "css/mui.min.css",
+      "css/style.css",
+      "fonts/mui.ttf"
+    ],
+    "refer": []
+  }
+}

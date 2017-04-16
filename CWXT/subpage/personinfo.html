@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/style.css" rel="stylesheet" />
+		<style>
+			.mui-fullscreen {
+				position: fixed;
+				z-index: 20;
+				background-color: #000;
+			}
+		</style>
+
+		<body>
+			<header class="mui-bar mui-bar-nav header">
+				<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+				<h1 class="mui-title">个人信息</h1>
+			</header>
+			<div class="mui-content">
+
+				<div class="title mui-text-center" style="padding: 10px;">
+					<span id="tx"><img  class="head-img mui-action-preview" id="headimg" src="../images/head-default.jpg" width="30%" style="border-radius: 50%;" /></span></div>
+				<form class="mui-input-group">
+					<div class="mui-input-row">
+						<label>呢称</label>
+						<input id="nicheng" type="text" class="mui-input-clear">
+					</div>
+					<div class="mui-input-row">
+						<label>邮件</label>
+						<input id="youjian" type="email" class="mui-input-clear">
+					</div>
+				</form>
+				<div class="mui-content-padded">
+					<button id='personsc' class="mui-btn mui-btn-block mui-btn-green" style="background: #3BBFFF; border: none;">信息上传</button>
+				</div>
+			</div>
+			<script src="../js/mui.min.js"></script>
+			<script src="../js/mui.view.js"></script>
+			<script type="text/javascript" src="https://cdn.wilddog.com/sdk/js/2.4.4/wilddog-auth.js"></script>
+			<script type="text/javascript">
+				var headimg = document.getElementById("headimg");
+				var nicheng = document.getElementById("nicheng");
+				var youjian = document.getElementById("youjian");
+				var cropper = null;
+				mui.init({
+					beforeback:function(){
+						plus.webview.getWebviewById('main').reload();
+					}
+				});
+				mui.plusReady(function() {
+					var config = {
+						authDomain: "financial.wilddog.com"
+					};
+					wilddog.initializeApp(config);
+					wilddog.auth().onAuthStateChanged(function(user) {
+						if(user) {
+							var self = plus.webview.currentWebview();
+							if(!self.imgurl) {
+								user.photoURL == "" ? "" : (headimg.src = user.photoURL);
+
+							} else {
+								headimg.src = self.imgurl;
+								plus.webview.close("cropperPic"); //关闭指定页面
+
+							}
+							nicheng.value = user.displayName;
+							youjian.value = user.email;
+
+						} else {
+							mui.toast("没有登录");
+						}
+					});
+
+				});
+
+				//照片替换
+				document.getElementById("tx").addEventListener('tap', function() {
+
+					var btnArray = [{
+						title: "拍照"
+					}, {
+						title: "相册选取"
+					}, {
+						title: "查看大图"
+					}];
+					plus.nativeUI.actionSheet({
+						cancel: "取消",
+						buttons: btnArray
+					}, function(event) {
+						var index = event.index;
+						switch(index) {
+							// 拍照添加文件
+							case 1: 
+
+								plus.camera.getCamera().captureImage(function(p) {
+										plus.io.resolveLocalFileSystemURL(p, function(entry) {
+											appendFile(p);
+										});
+									}, function(error) {
+										alert("Capture image failed: " + error.message);
+									}, {
+										filename: "file:///storage/sdcard0/DCIM/Camera/" + "ra/"
+									} //改变一下拍照的路径,名字
+
+								);
+
+								break;
+								// 从相册添加文件
+							case 2:
+								plus.gallery.pick(function(p) {
+									appendFile(p);
+								});
+								break;
+								//图片放大
+							case 3:
+								var imgs = document.getElementById("headimg");
+								var slider = document.createElement("div");
+								slider.setAttribute("id", "__mui-imageview__");
+								slider.classList.add("mui-slider");
+								slider.classList.add("mui-fullscreen");
+								slider.style.display = "none";
+								slider.addEventListener("tap", function() {
+									slider.style.display = "none";
+								});
+								slider.addEventListener("touchmove", function(event) {
+									event.preventDefault();
+								})
+								var slider_group = document.createElement("div");
+								slider_group.setAttribute("id", "__mui-imageview__group");
+								slider_group.classList.add("mui-slider-group");
+
+								var item = document.createElement("div");
+								item.classList.add("mui-slider-item");
+								var a = document.createElement("a");
+								var img = document.createElement("img");
+								img.setAttribute("src", imgs.src);
+								a.appendChild(img);
+								item.appendChild(a);
+								slider_group.appendChild(item);
+								slider.appendChild(slider_group);
+								document.body.appendChild(slider);
+								var _slider = mui(slider).slider();
+								//给图片添加点击事件，触发预览显示；
+								slider.style.display = "block";
+								_slider.refresh();
+								_slider.gotoItem(0, 0);
+								break;
+						}
+					});
+
+				});
+				//跳转
+				function appendFile(path) {
+					mui.openWindow({
+						id: 'cropperPic',
+						url: 'cropperPic.html',
+						show: {
+							aniShow: 'slide-in-right'
+								//,duration: 300
+						},
+						waiting: {
+							autoShow: false,
+							title: '正在加载...'
+						},
+						extras: {
+							//三个动态参数
+							imgurl: path,
+
+						}
+					});
+				}
+
+				/*通过base64编码字符流计算文件流大小函数*/
+				function fileSize(str) {
+					var fileSize;
+					if(str.indexOf('=') > 0) {
+						var indexOf = str.indexOf('=');
+						str = str.substring(0, indexOf); //把末尾的’=‘号去掉
+					}
+
+					fileSize = parseInt(str.length - (str.length / 8) * 2);
+					return fileSize;
+				}
+
+				/*把字符串转换成json*/
+				function strToJson(str) {
+					var json = eval('(' + str + ')');
+					return json;
+				}
+				/*img 变成base64*/
+				function getBase64Image(img) {
+					var canvas = document.createElement("canvas");
+					canvas.width = img.width;
+					canvas.height = img.height;
+					var ctx = canvas.getContext("2d");
+					ctx.drawImage(img, 0, 0, img.width, img.height);
+					var ext = img.src.substring(img.src.lastIndexOf(".") + 1).toLowerCase();
+					var dataURL = canvas.toDataURL("image/" + ext);
+					return dataURL;
+				}
+
+				//信息上传
+				document.getElementById("personsc").addEventListener('tap', function() {
+					var imgUrl = null;
+					//把当前图片传七牛云的后台
+					var image = new Image();
+					image.src = headimg.src;
+					imgUrl = getBase64Image(image).substring(getBase64Image(image).indexOf('base64,') + 7);
+					var url = "http://upload.qiniu.com/putb64/" + fileSize(imgUrl); //非华东空间需要根据注意事项 1 修改上传域名
+					var waiting = plus.nativeUI.showWaiting("正在上传");
+					var xhr = new XMLHttpRequest();
+					xhr.onreadystatechange = function() {
+						var picUrl = null;
+						if(xhr.readyState == 4) {
+							var keyText = xhr.responseText;
+							/*返回的key是字符串，需要装换成json*/
+							keyText = strToJson(keyText);
+							/* http://ojvh6i96g.bkt.clouddn.com/是我的七牛云空间网址，keyText.key 是返回的图片文件名*/
+							picUrl = "http://ol50hs8te.bkt.clouddn.com/" + keyText.key;
+							//向野狗后台发送姓名和头像
+							wilddog.auth().currentUser.updateProfile({
+								displayName: nicheng.value,
+								photoURL: picUrl,
+							}).then(function() {
+								plus.storage.setItem("userImgSrc", picUrl);
+								// 更新成功
+								mui.toast("图片上传成功");
+								waiting.close();
+								
+
+							}).catch(function(error) {
+								waiting.close();
+								// 发生错误
+							});
+							//向野狗后台发送邮件
+							wilddog.auth().currentUser.updateEmail(youjian.value).then(function() {
+								// 更新成功
+								mui.toast("邮件上传成功");
+							}).catch(function(error) {
+								// 发生错误
+								console.log(error);
+							});
+
+						}
+					}
+					xhr.open("POST", url, true);
+					xhr.setRequestHeader("Content-Type", "application/octet-stream");
+					xhr.setRequestHeader("Authorization", "UpToken VgP0rGFw2ucs3SnhTB7AUax6DZlj0bFF4BOAAeq5:KlaLkem5WCLI3p8iqzrgC_9HfNA=:eyJzY29wZSI6IndlbndlbiIsImRlYWRsaW5lIjoxNTcwNjM2ODAwfQ==");
+					xhr.send(imgUrl);
+					console.log(youjian.value);
+
+				});
+			</script>
+		</body>
+
+</html>
